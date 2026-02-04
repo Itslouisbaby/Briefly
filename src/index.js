@@ -199,6 +199,39 @@ app.post('/api/demo', async (req, res) => {
   }
 });
 
+// Generate audio for a briefing (demo/Pro feature)
+app.post('/api/audio', async (req, res) => {
+  try {
+    const { text } = req.body;
+    
+    // Check if ElevenLabs is configured
+    if (!process.env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY.includes('placeholder')) {
+      return res.status(503).json({ 
+        error: 'Audio generation not configured',
+        message: 'ElevenLabs API key not set' 
+      });
+    }
+    
+    // Import audio module
+    const { generateAudioBriefing } = await import('./audio.js');
+    
+    // Generate audio (returns stream, we'll return a message for now)
+    const audioStream = await generateAudioBriefing(text || 'Hello from Briefly!');
+    
+    if (!audioStream) {
+      return res.status(500).json({ error: 'Failed to generate audio' });
+    }
+    
+    res.json({ 
+      success: true,
+      message: 'Audio generation endpoint ready',
+      note: 'Full audio streaming will be implemented with file storage'
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Briefly server running on port ${PORT}`);

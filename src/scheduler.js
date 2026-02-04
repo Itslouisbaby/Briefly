@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { all, run } from './database.js';
-import { generateBriefing, formatBriefingText } from './briefing.js';
+import { generateBriefing, formatBriefingText, formatBriefingHTML } from './briefing.js';
+import { generateAudioFromBriefing } from './audio.js';
 
 // Schedule briefing generation every hour
 // Users get briefings based on their preferred time
@@ -39,6 +40,7 @@ async function generateAndDeliverBriefing(user) {
   // Generate briefing
   const briefing = await generateBriefing(user.topic);
   const text = formatBriefingText(briefing);
+  const html = formatBriefingHTML(briefing);
   
   // Save to database
   const result = await run(
@@ -48,19 +50,63 @@ async function generateAndDeliverBriefing(user) {
   
   const briefingId = result.lastID;
   
-  // For MVP, just log the briefing
-  // In production, this would send email/Slack/audio
+  // Generate audio for Pro/Team users who want it
+  let audioUrl = null;
+  if (user.voice_enabled && (user.plan === 'pro' || user.plan === 'team')) {
+    console.log(`🎙️ Generating audio for ${user.email}...`);
+    try {
+      // In production, this would upload to S3/CDN and get a URL
+      // For now, we log that audio would be generated
+      console.log(`   Audio generation would happen here`);
+      audioUrl = '[audio-url-placeholder]';
+    } catch (error) {
+      console.error(`   Failed to generate audio:`, error.message);
+    }
+  }
+  
+  // Deliver based on preference
+  try {
+    if (user.delivery_method === 'email' || user.delivery_method === 'both') {
+      await sendEmailBriefing(user.email, text, html, audioUrl);
+    }
+    
+    if (user.delivery_method === 'slack' || user.delivery_method === 'both') {
+      await sendSlackBriefing(user.slack_webhook, text);
+    }
+    
+    // Mark as sent
+    await run(
+      `UPDATE briefings SET status = 'sent', sent_at = ? WHERE id = ?`,
+      [new Date().toISOString(), briefingId]
+    );
+    
+    console.log(`✅ Briefing delivered to ${user.email}`);
+  } catch (error) {
+    console.error(`❌ Failed to deliver briefing to ${user.email}:`, error);
+    await run(
+      `UPDATE briefings SET status = 'failed', error = ? WHERE id = ?`,
+      [error.message, briefingId]
+    );
+  }
+}
+
+async function sendEmailBriefing(email, text, html, audioUrl) {
+  // TODO: Implement with Resend
+  // For MVP, log the briefing
+  console.log('═══════════════════════════════════════');
+  console.log(`📧 EMAIL TO: ${email}`);
   console.log('═══════════════════════════════════════');
   console.log(text);
+  if (audioUrl) {
+    console.log(`🎙️ Audio: ${audioUrl}`);
+  }
   console.log('═══════════════════════════════════════');
-  
-  // Mark as sent
-  await run(
-    `UPDATE briefings SET status = 'sent', sent_at = ? WHERE id = ?`,
-    [new Date().toISOString(), briefingId]
-  );
-  
-  console.log(`✅ Briefing generated for ${user.email}`);
+}
+
+async function sendSlackBriefing(webhook, text) {
+  // TODO: Implement Slack webhook
+  console.log(`💬 SLACK WEBHOOK: ${webhook || 'not configured'}`);
+  console.log(text.substring(0, 500) + '...');
 }
 
 console.log('⏰ Briefing scheduler initialized');

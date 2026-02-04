@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Briefly - Your Daily Intelligence Briefing</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    header {
+      padding: 2rem 0;
+      text-align: center;
+      color: white;
+    }
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .tagline {
+      font-size: 1.25rem;
+      opacity: 0.9;
+    }
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+      color: white;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #fff;
+      color: #667eea;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .features {
+      background: white;
+      padding: 4rem 0;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .feature {
+      padding: 2rem;
+      border-radius: 12px;
+      background: #f8f9fa;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .feature h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .pricing {
+      padding: 4rem 0;
+      background: #f8f9fa;
+    }
+    .pricing h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .pricing-card.featured {
+      border: 3px solid #667eea;
+      transform: scale(1.05);
+    }
+    .pricing-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .price {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #667eea;
+      margin: 1rem 0;
+    }
+    .price span {
+      font-size: 1rem;
+      color: #666;
+    }
+    .pricing-card ul {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+    .pricing-card li {
+      padding: 0.5rem 0;
+      color: #666;
+    }
+    .pricing-button {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .pricing-button:hover {
+      background: #5a6fd6;
+    }
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 2rem 0;
+    }
+    .signup-form {
+      max-width: 400px;
+      margin: 2rem auto;
+      display: flex;
+      gap: 1rem;
+    }
+    .signup-form input {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .signup-form button {
+      padding: 1rem 2rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">📰 Briefly</div>
+      <div class="tagline">Your personal intelligence briefing, every morning</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Stay informed without the noise</h1>
+      <p>Get a personalized daily briefing on the topics that matter to you. AI-curated, human-quality, delivered how you want it.</p>
+      <a href="#pricing" class="cta-button">Start Your Free Trial</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2>How it works</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon">🔍</div>
+          <h3>AI-Powered Research</h3>
+          <p>We scan thousands of sources to find the stories that actually matter to you. No fluff, no clickbait.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎙️</div>
+          <h3>Listen or Read</h3>
+          <p>Get your briefing as a natural-sounding audio update or text summary. Perfect for commutes or coffee.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <h3>Delivered On Your Schedule</h3>
+          <p>Choose when and how you receive updates. Email, Slack, or webhook. Your briefing, your way.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <h3>Topics You Care About</h3>
+          <p>Tech, markets, AI, science, world news. Pick your interests and we'll keep you informed.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <h3>Source Transparency</h3>
+          <p>Every story includes source attribution. Know where your information comes from.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🧠</div>
+          <h3>Gets Smarter Over Time</h3>
+          <p>Your briefings improve as we learn what you find valuable. Just reply with feedback.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <h2>Simple pricing</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Basic</h3>
+          <div class="price">$9<span>/month</span></div>
+          <ul>
+            <li>✓ 1 topic briefing daily</li>
+            <li>✓ Text delivery</li>
+            <li>✓ Email delivery</li>
+            <li>✓ 7-day archive</li>
+          </ul>
+          <a href="#" class="pricing-button" onclick="startCheckout('basic')">Get Started</a>
+        </div>
+        <div class="pricing-card featured">
+          <h3>Pro</h3>
+          <div class="price">$29<span>/month</span></div>
+          <ul>
+            <li>✓ 3 topic briefings daily</li>
+            <li>✓ Text + Audio delivery</li>
+            <li>✓ Email + Slack delivery</li>
+            <li>✓ Weekend deep dives</li>
+            <li>✓ 30-day archive</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <a href="#" class="pricing-button" onclick="startCheckout('pro')">Get Started</a>
+        </div>
+        <div class="pricing-card">
+          <h3>Team</h3>
+          <div class="price">$99<span>/month</span></div>
+          <ul>
+            <li>✓ Everything in Pro</li>
+            <li>✓ 5 team members</li>
+            <li>✓ Custom topics</li>
+            <li>✓ API access</li>
+            <li>✓ Unlimited archive</li>
+          </ul>
+          <a href="#" class="pricing-button" onclick="startCheckout('team')">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <div class="container" style="text-align: center;">
+      <h2 style="color: white;">Ready to stay informed?</h2>
+      <p style="font-size: 1.25rem; opacity: 0.9; margin-bottom: 2rem;">Join the beta and get 50% off your first 3 months.</p>
+      <form class="signup-form" onsubmit="return handleSignup(event)">
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <button type="submit">Get Early Access</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Briefly. Built with 💜 by Lucas.</p>
+      <p style="margin-top: 0.5rem; opacity: 0.7;">Your personal intelligence briefing service.</p>
+    </div>
+  </footer>
+
+  <script>
+    async function startCheckout(plan) {
+      alert('Coming soon! Enter your email below to get early access.');
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      alert(`Thanks! We'll notify ${email} when Briefly launches.`);
+      return false;
+    }
+  </script>
+</body>
+</html>

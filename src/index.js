@@ -31,8 +31,9 @@ app.post('/api/checkout', async (req, res) => {
     const { email, plan } = req.body;
     
     const prices = {
-      basic: 'price_basic_placeholder',
-      pro: 'price_pro_placeholder'
+      basic: 'price_1Sx0rhQv7zhQy1TbGbEcjflP',
+      pro: 'price_1Sx0rhQv7zhQy1Tb4Zeg6Bl7',
+      team: 'price_1Sx0riQv7zhQy1TbQY9GlUVm'
     };
 
     const session = await stripe.checkout.sessions.create({

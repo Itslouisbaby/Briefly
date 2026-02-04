@@ -79,13 +79,20 @@
 
 ## 🚀 Launch Sequence
 
-### Immediate Actions (Next 30 Minutes)
+### Immediate Actions (Ready to Execute)
 1. ✅ Railway CLI installed
-2. 🔄 Railway login (requires browser auth - run `railway login`)
-3. 🔄 Deploy with `railway up`
-4. 🔄 Get Stripe test keys from dashboard
-5. 🔄 Configure environment variables
-6. 🔄 Test payment flow
+2. ✅ Code committed to git
+3. ⏳ **NEXT: Run `railway login` then `railway up` in briefly/ folder**
+4. ⏳ Add API keys in Railway dashboard
+5. ⏳ Test payment flow
+
+**Command to run:**
+```bash
+cd briefly
+railway login
+railway init  # Create new project "briefly"
+railway up    # Deploy
+```
 
 ### Week 1: Beta
 1. Deploy to production

@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import { all, run } from './database.js';
 import { generateBriefing, formatBriefingText, formatBriefingHTML } from './briefing.js';
 import { generateAudioFromBriefing } from './audio.js';
+import { sendBriefingEmail } from './email.js';
 
 // Schedule briefing generation every hour
 // Users get briefings based on their preferred time
@@ -91,16 +92,24 @@ async function generateAndDeliverBriefing(user) {
 }
 
 async function sendEmailBriefing(email, text, html, audioUrl) {
-  // TODO: Implement with Resend
-  // For MVP, log the briefing
-  console.log('═══════════════════════════════════════');
-  console.log(`📧 EMAIL TO: ${email}`);
-  console.log('═══════════════════════════════════════');
-  console.log(text);
-  if (audioUrl) {
-    console.log(`🎙️ Audio: ${audioUrl}`);
+  try {
+    // Check if Resend is configured
+    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY.includes('placeholder')) {
+      console.log('⚠️  Resend not configured, logging instead:');
+      console.log('═══════════════════════════════════════');
+      console.log(`📧 EMAIL TO: ${email}`);
+      console.log('═══════════════════════════════════════');
+      console.log(text);
+      if (audioUrl) console.log(`🎙️ Audio: ${audioUrl}`);
+      console.log('═══════════════════════════════════════');
+      return;
+    }
+    
+    await sendBriefingEmail(email, text, html, audioUrl);
+  } catch (error) {
+    console.error(`❌ Failed to send email to ${email}:`, error.message);
+    throw error;
   }
-  console.log('═══════════════════════════════════════');
 }
 
 async function sendSlackBriefing(webhook, text) {

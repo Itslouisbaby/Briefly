@@ -160,6 +160,13 @@ app.post('/api/waitlist', async (req, res) => {
     // Track analytics
     await trackEvent('waitlist_signup', { email, topic, interests });
     
+    // Send welcome email (don't block response on this)
+    if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes('placeholder')) {
+      import('./email.js').then(({ sendWelcomeEmail }) => {
+        sendWelcomeEmail(email).catch(err => console.error('Welcome email failed:', err));
+      });
+    }
+    
     res.json({ 
       success: true, 
       message: 'Added to waitlist',

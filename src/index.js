@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 import { initDatabase, run, get, all } from './database.js';
 import { generateBriefing, formatBriefingText } from './briefing.js';
 import './scheduler.js';
+import { initAnalytics, getMetrics, trackEvent } from './analytics.js';
 
 dotenv.config();
 
@@ -15,8 +16,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Initialize database
+// Initialize database and analytics
 await initDatabase();
+await initAnalytics();
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -122,6 +124,16 @@ app.get('/api/briefings/:userId', async (req, res) => {
       [req.params.userId]
     );
     res.json(briefings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get business metrics
+app.get('/api/metrics', async (req, res) => {
+  try {
+    const metrics = await getMetrics();
+    res.json(metrics);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

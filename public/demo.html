@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Try Briefly - Free Demo</title>
+  <meta name="description" content="Try Briefly for free. Generate a sample AI-powered briefing on tech, markets, AI, science, or world news.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f7fa;
+    }
+    .header {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #667eea;
+      text-decoration: none;
+    }
+    .nav-links a {
+      margin-left: 1.5rem;
+      color: #666;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: #667eea;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .hero {
+      text-align: center;
+      padding: 3rem 0;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .hero p {
+      color: #666;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .demo-box {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .topic-btn {
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+    .topic-btn:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+    .topic-btn.active {
+      border-color: #667eea;
+      background: #667eea;
+      color: white;
+    }
+    .generate-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .briefing-result {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: none;
+    }
+    .briefing-result.show {
+      display: block;
+    }
+    .briefing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .briefing-title {
+      font-size: 1.5rem;
+      color: #333;
+    }
+    .briefing-date {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .briefing-content {
+      color: #444;
+      line-height: 1.8;
+    }
+    .briefing-content h3 {
+      color: #667eea;
+      margin: 1.5rem 0 0.75rem;
+      font-size: 1.1rem;
+    }
+    .briefing-content p {
+      margin-bottom: 1rem;
+    }
+    .briefing-footer {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #f0f0f0;
+      text-align: center;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+    .feature {
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .feature h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    .feature p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">📰 Briefly</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/dashboard.html">Dashboard</a>
+      <a href="/" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.5rem 1.25rem; border-radius: 50px;">Get Started</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Try Briefly for Free</h1>
+      <p>Generate a sample briefing and see how Briefly keeps you informed in just 5 minutes.</p>
+    </div>
+
+    <div class="demo-box">
+      <h3 style="margin-bottom: 1rem; color: #333;">Choose a topic:</h3>
+      <div class="topic-grid">
+        <button class="topic-btn active" data-topic="tech">💻 Technology</button>
+        <button class="topic-btn" data-topic="markets">📈 Markets</button>
+        <button class="topic-btn" data-topic="ai">🤖 Artificial Intelligence</button>
+        <button class="topic-btn" data-topic="science">🔬 Science</button>
+        <button class="topic-btn" data-topic="world">🌍 World News</button>
+      </div>
+      <div class="error-message" id="error"></div>
+      <button class="generate-btn" id="generate-btn" onclick="generateBriefing()">
+        Generate My Free Briefing
+      </button>
+    </div>
+
+    <div class="loading" id="loading" style="display: none;">
+      <div class="spinner"></div>
+      <p style="color: #666;">Our AI is researching and writing your briefing... This takes about 10 seconds.</p>
+    </div>
+
+    <div class="briefing-result" id="result">
+      <div class="briefing-header">
+        <div>
+          <div class="briefing-title" id="result-topic">Tech Briefing</div>
+          <div class="briefing-date" id="result-date">February 4, 2026</div>
+        </div>
+        <div style="font-size: 2rem;">📰</div>
+      </div>
+      <div class="briefing-content" id="result-content">
+        <!-- Content will be inserted here -->
+      </div>
+      <div class="briefing-footer">
+        <p style="margin-bottom: 1rem; color: #666;">This is a sample. Get personalized daily briefings delivered to your inbox.</p>
+        <a href="/" class="cta-button">Start Your Free Trial</a>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>5 Minute Read</h3>
+        <p>AI-curated, human-quality summaries</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎯</div>
+        <h3>What Matters</h3>
+        <p>No fluff, no clickbait, just signal</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📧</div>
+        <h3>In Your Inbox</h3>
+        <p>Every morning, on your schedule</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedTopic = 'tech';
+
+    // Topic button selection
+    document.querySelectorAll('.topic-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedTopic = btn.dataset.topic;
+      });
+    });
+
+    async function generateBriefing() {
+      const btn = document.getElementById('generate-btn');
+      const loading = document.getElementById('loading');
+      const result = document.getElementById('result');
+      const error = document.getElementById('error');
+
+      btn.disabled = true;
+      loading.style.display = 'block';
+      result.classList.remove('show');
+      error.classList.remove('show');
+
+      try {
+        const res = await fetch('/api/demo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: selectedTopic })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        // Display result
+        document.getElementById('result-topic').textContent = 
+          selectedTopic.charAt(0).toUpperCase() + selectedTopic.slice(1) + ' Briefing';
+        document.getElementById('result-date').textContent = new Date().toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        // Format the briefing text
+        const content = data.text || data.briefing?.content || 'Briefing content unavailable.';
+        document.getElementById('result-content').innerHTML = formatContent(content);
+        
+        result.classList.add('show');
+        result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      } catch (err) {
+        error.textContent = 'Error: ' + err.message;
+        error.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+      }
+    }
+
+    function formatContent(text) {
+      // Convert newlines to paragraphs
+      return text.split('\n\n').map(para => {
+        if (para.startsWith('##')) {
+          return '<h3>' + para.replace('##', '').trim() + '</h3>';
+        }
+        return '<p>' + para + '</p>';
+      }).join('');
+    }
+  </script>
+</body>
+</html>

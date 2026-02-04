@@ -1,5 +1,11 @@
-// Briefly - Daily Intelligence Briefing Generator
-// Uses RSS feeds and APIs to gather news
+import Parser from 'rss-parser';
+
+const rssParser = new Parser({
+  timeout: 10000,
+  headers: {
+    'User-Agent': 'Briefly/1.0'
+  }
+});
 
 const RSS_FEEDS = {
   tech: [
@@ -29,33 +35,62 @@ export async function generateBriefing(topic, userPreferences = {}) {
   console.log(`🔍 Generating briefing for topic: ${topic}`);
   
   try {
-    // For MVP, use placeholder content structure
-    // In production, this would scrape RSS feeds and aggregate content
-    const stories = await fetchStories(topic);
+    const stories = await fetchStoriesFromRSS(topic);
     
     const briefing = {
       date: new Date().toISOString().split('T')[0],
       topic: topic,
       stories: stories,
       generated_at: new Date().toISOString(),
-      estimated_read_time: `${stories.length * 2} min`
+      estimated_read_time: `${Math.max(2, stories.length * 2)} min`
     };
 
     return briefing;
   } catch (error) {
     console.error('Error generating briefing:', error);
-    return {
-      date: new Date().toISOString().split('T')[0],
-      topic: topic,
-      stories: [],
-      error: error.message
-    };
+    // Fallback to sample data if RSS fails
+    return generateFallbackBriefing(topic);
   }
 }
 
-async function fetchStories(topic) {
-  // Placeholder stories for MVP demo
-  // In production, this would parse RSS feeds and fetch articles
+async function fetchStoriesFromRSS(topic) {
+  const feeds = RSS_FEEDS[topic] || RSS_FEEDS.tech;
+  const allStories = [];
+  
+  // Try to fetch from each feed
+  for (const feedUrl of feeds) {
+    try {
+      const feed = await rssParser.parseURL(feedUrl);
+      
+      // Take top 2 stories from each feed
+      const stories = feed.items.slice(0, 2).map(item => ({
+        title: item.title,
+        summary: item.contentSnippet 
+          ? item.contentSnippet.substring(0, 200) + (item.contentSnippet.length > 200 ? '...' : '')
+          : item.content 
+            ? item.content.replace(/<[^>]*>/g, '').substring(0, 200) + '...'
+            : 'No summary available',
+        source: feed.title || new URL(feedUrl).hostname,
+        url: item.link,
+        published: item.pubDate || item.isoDate
+      }));
+      
+      allStories.push(...stories);
+    } catch (error) {
+      console.warn(`Failed to fetch ${feedUrl}:`, error.message);
+    }
+  }
+  
+  // If we got stories, return them (limited to 5)
+  if (allStories.length > 0) {
+    return allStories.slice(0, 5);
+  }
+  
+  // Fallback to sample data
+  return getSampleStories(topic);
+}
+
+function getSampleStories(topic) {
   const sampleStories = {
     tech: [
       {
@@ -126,17 +161,35 @@ async function fetchStories(topic) {
   return sampleStories[topic] || sampleStories.tech;
 }
 
+function generateFallbackBriefing(topic) {
+  return {
+    date: new Date().toISOString().split('T')[0],
+    topic: topic,
+    stories: getSampleStories(topic),
+    generated_at: new Date().toISOString(),
+    estimated_read_time: '5 min',
+    fallback: true
+  };
+}
+
 export function formatBriefingText(briefing) {
   let text = `📰 BRIEFLY - ${briefing.date}\n`;
   text += `${'='.repeat(50)}\n`;
   text += `Topic: ${briefing.topic.toUpperCase()}\n`;
   text += `Read time: ${briefing.estimated_read_time}\n`;
+  if (briefing.fallback) {
+    text += `(Using sample content - RSS feeds temporarily unavailable)\n`;
+  }
   text += `${'='.repeat(50)}\n\n`;
 
   briefing.stories.forEach((story, i) => {
     text += `${i + 1}. ${story.title}\n`;
     text += `   ${story.summary}\n`;
-    text += `   Source: ${story.source}\n\n`;
+    text += `   Source: ${story.source}\n`;
+    if (story.url && story.url !== '#') {
+      text += `   Link: ${story.url}\n`;
+    }
+    text += `\n`;
   });
 
   text += `${'='.repeat(50)}\n`;
@@ -151,6 +204,7 @@ export function formatBriefingHTML(briefing) {
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
       <h2 style="color: #667eea; margin-bottom: 8px;">📰 Briefly</h2>
       <p style="color: #666; margin-bottom: 24px;">${briefing.date} • ${briefing.topic.toUpperCase()} • ${briefing.estimated_read_time}</p>
+      ${briefing.fallback ? '<p style="color: #999; font-size: 12px;">(Using sample content)</p>' : ''}
       <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
   `;
 
@@ -160,6 +214,7 @@ export function formatBriefingHTML(briefing) {
         <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #222;">${i + 1}. ${story.title}</h3>
         <p style="margin: 0 0 8px 0; color: #444; line-height: 1.6;">${story.summary}</p>
         <p style="margin: 0; font-size: 12px; color: #888;">Source: ${story.source}</p>
+        ${story.url && story.url !== '#' ? `<a href="${story.url}" style="font-size: 12px; color: #667eea;">Read more →</a>` : ''}
       </div>
     `;
   });

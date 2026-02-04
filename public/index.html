@@ -58,6 +58,8 @@
       font-weight: bold;
       font-size: 1.1rem;
       transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      cursor: pointer;
     }
     .cta-button:hover {
       transform: translateY(-2px);
@@ -90,6 +92,68 @@
     .feature h3 {
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
+    }
+    .demo {
+      padding: 4rem 0;
+      background: #f0f4f8;
+    }
+    .demo h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .demo-intro {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      color: #666;
+    }
+    .demo-controls {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+    .topic-select {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      background: white;
+      margin-right: 1rem;
+      cursor: pointer;
+    }
+    .demo-button {
+      padding: 0.75rem 2rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .demo-button:hover {
+      background: #5a6fd6;
+    }
+    .demo-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .briefing-output {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+    .briefing-output.show {
+      display: block;
     }
     .pricing {
       padding: 4rem 0;
@@ -150,9 +214,78 @@
       border-radius: 8px;
       font-weight: bold;
       transition: background 0.2s;
+      border: none;
+      cursor: pointer;
     }
     .pricing-button:hover {
       background: #5a6fd6;
+    }
+    .waitlist {
+      padding: 4rem 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .waitlist h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .waitlist-subtitle {
+      text-align: center;
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+    .waitlist-count {
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+    .signup-form {
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .signup-form input, .signup-form select {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .signup-form button {
+      width: 100%;
+      padding: 1rem;
+      background: #fff;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .signup-form button:hover {
+      transform: translateY(-2px);
+    }
+    .signup-form button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    .success-message.show {
+      display: block;
     }
     footer {
       background: #333;
@@ -160,27 +293,9 @@
       text-align: center;
       padding: 2rem 0;
     }
-    .signup-form {
-      max-width: 400px;
-      margin: 2rem auto;
-      display: flex;
-      gap: 1rem;
-    }
-    .signup-form input {
-      flex: 1;
-      padding: 1rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-    .signup-form button {
-      padding: 1rem 2rem;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
+    .error {
+      color: #ff6b6b;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -196,7 +311,7 @@
     <div class="container">
       <h1>Stay informed without the noise</h1>
       <p>Get a personalized daily briefing on the topics that matter to you. AI-curated, human-quality, delivered how you want it.</p>
-      <a href="#pricing" class="cta-button">Start Your Free Trial</a>
+      <a href="#waitlist" class="cta-button">Get Early Access</a>
     </div>
   </section>
 
@@ -238,6 +353,24 @@
     </div>
   </section>
 
+  <section class="demo" id="demo">
+    <div class="container">
+      <h2>Try a demo briefing</h2>
+      <p class="demo-intro">See what a daily briefing looks like. This pulls real stories from RSS feeds.</p>
+      <div class="demo-controls">
+        <select id="demo-topic" class="topic-select">
+          <option value="tech">Technology</option>
+          <option value="markets">Markets</option>
+          <option value="ai">AI</option>
+          <option value="science">Science</option>
+          <option value="world">World News</option>
+        </select>
+        <button class="demo-button" onclick="generateDemo()">Generate Briefing</button>
+      </div>
+      <div id="briefing-output" class="briefing-output"></div>
+    </div>
+  </section>
+
   <section class="pricing" id="pricing">
     <div class="container">
       <h2>Simple pricing</h2>
@@ -251,7 +384,7 @@
             <li>✓ Email delivery</li>
             <li>✓ 7-day archive</li>
           </ul>
-          <a href="#" class="pricing-button" onclick="startCheckout('basic')">Get Started</a>
+          <button class="pricing-button" onclick="scrollToWaitlist()">Join Waitlist</button>
         </div>
         <div class="pricing-card featured">
           <h3>Pro</h3>
@@ -264,7 +397,7 @@
             <li>✓ 30-day archive</li>
             <li>✓ Priority support</li>
           </ul>
-          <a href="#" class="pricing-button" onclick="startCheckout('pro')">Get Started</a>
+          <button class="pricing-button" onclick="scrollToWaitlist()">Join Waitlist</button>
         </div>
         <div class="pricing-card">
           <h3>Team</h3>
@@ -276,20 +409,40 @@
             <li>✓ API access</li>
             <li>✓ Unlimited archive</li>
           </ul>
-          <a href="#" class="pricing-button" onclick="startCheckout('team')">Contact Sales</a>
+          <button class="pricing-button" onclick="scrollToWaitlist()">Join Waitlist</button>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="features" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-    <div class="container" style="text-align: center;">
-      <h2 style="color: white;">Ready to stay informed?</h2>
-      <p style="font-size: 1.25rem; opacity: 0.9; margin-bottom: 2rem;">Join the beta and get 50% off your first 3 months.</p>
-      <form class="signup-form" onsubmit="return handleSignup(event)">
-        <input type="email" id="email" placeholder="Enter your email" required>
-        <button type="submit">Get Early Access</button>
+  <section class="waitlist" id="waitlist">
+    <div class="container">
+      <h2>Join the Beta</h2>
+      <p class="waitlist-subtitle">Get 50% off your first 3 months when we launch.</p>
+      <p class="waitlist-count" id="waitlist-count">Loading waitlist...</p>
+      
+      <form class="signup-form" id="waitlist-form" onsubmit="return handleSignup(event)">
+        <div class="form-group">
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <select id="topic" required>
+            <option value="">Select your primary interest...</option>
+            <option value="tech">Technology</option>
+            <option value="markets">Markets & Finance</option>
+            <option value="ai">Artificial Intelligence</option>
+            <option value="science">Science</option>
+            <option value="world">World News</option>
+          </select>
+        </div>
+        <button type="submit" id="submit-btn">Get Early Access</button>
+        <div id="error-message" class="error"></div>
       </form>
+      
+      <div id="success-message" class="success-message">
+        <h3>🎉 You're on the list!</h3>
+        <p>We'll notify you when Briefly launches. Thanks for your interest!</p>
+      </div>
     </div>
   </section>
 
@@ -301,14 +454,88 @@
   </footer>
 
   <script>
-    async function startCheckout(plan) {
-      alert('Coming soon! Enter your email below to get early access.');
+    // Load waitlist count on page load
+    fetch('/api/waitlist/count')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('waitlist-count').textContent = 
+          `${data.count} people already on the waitlist`;
+      })
+      .catch(() => {
+        document.getElementById('waitlist-count').textContent = 'Join others on the waitlist';
+      });
+
+    async function generateDemo() {
+      const btn = document.querySelector('.demo-button');
+      const output = document.getElementById('briefing-output');
+      const topic = document.getElementById('demo-topic').value;
+      
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      output.classList.remove('show');
+      
+      try {
+        const res = await fetch('/api/demo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic })
+        });
+        const data = await res.json();
+        output.textContent = data.text;
+        output.classList.add('show');
+      } catch (err) {
+        output.textContent = 'Error generating briefing. Please try again.';
+        output.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate Briefing';
+      }
+    }
+
+    function scrollToWaitlist() {
+      document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
     }
 
     async function handleSignup(e) {
       e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errorDiv = document.getElementById('error-message');
+      
+      btn.disabled = true;
+      btn.textContent = 'Joining...';
+      errorDiv.textContent = '';
+      
       const email = document.getElementById('email').value;
-      alert(`Thanks! We'll notify ${email} when Briefly launches.`);
+      const topic = document.getElementById('topic').value;
+      
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, topic })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          document.getElementById('waitlist-form').style.display = 'none';
+          document.getElementById('success-message').classList.add('show');
+          // Update count
+          fetch('/api/waitlist/count')
+            .then(r => r.json())
+            .then(d => {
+              document.getElementById('waitlist-count').textContent = 
+                `${d.count} people on the waitlist`;
+            });
+        } else {
+          errorDiv.textContent = data.error || 'Something went wrong';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Network error. Please try again.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Get Early Access';
+      }
+      
       return false;
     }
   </script>

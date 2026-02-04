@@ -139,6 +139,66 @@ app.get('/api/metrics', async (req, res) => {
   }
 });
 
+// Waitlist signup (for beta users before Stripe is configured)
+app.post('/api/waitlist', async (req, res) => {
+  try {
+    const { email, topic, interests } = req.body;
+    
+    // Check if already exists
+    const existing = await get('SELECT * FROM users WHERE email = ?', [email]);
+    if (existing) {
+      return res.json({ success: true, message: 'Already on waitlist', alreadyExists: true });
+    }
+    
+    // Add to waitlist as inactive user
+    await run(
+      `INSERT INTO users (email, plan, status, created_at) 
+       VALUES (?, ?, ?, ?)`,
+      [email, 'waitlist', 'waitlist', new Date().toISOString()]
+    );
+    
+    // Track analytics
+    await trackEvent('waitlist_signup', { email, topic, interests });
+    
+    res.json({ 
+      success: true, 
+      message: 'Added to waitlist',
+      betaAccess: 'Coming soon - you\'ll be notified when we launch'
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get waitlist count (public)
+app.get('/api/waitlist/count', async (req, res) => {
+  try {
+    const result = await get('SELECT COUNT(*) as count FROM users WHERE status = ?', ['waitlist']);
+    res.json({ count: result.count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Demo briefing (no auth required)
+app.post('/api/demo', async (req, res) => {
+  try {
+    const { topic } = req.body;
+    const briefing = await generateBriefing(topic || 'tech');
+    const text = formatBriefingText(briefing);
+    
+    await trackEvent('demo_generated', { topic });
+    
+    res.json({ 
+      briefing, 
+      text,
+      note: 'This is a demo. Sign up for personalized daily briefings.'
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Briefly server running on port ${PORT}`);

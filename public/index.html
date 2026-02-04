@@ -384,7 +384,7 @@
             <li>✓ Email delivery</li>
             <li>✓ 7-day archive</li>
           </ul>
-          <button class="pricing-button" onclick="scrollToWaitlist()">Join Waitlist</button>
+          <button class="pricing-button" onclick="startCheckout('basic')">Subscribe Now</button>
         </div>
         <div class="pricing-card featured">
           <h3>Pro</h3>
@@ -397,7 +397,7 @@
             <li>✓ 30-day archive</li>
             <li>✓ Priority support</li>
           </ul>
-          <button class="pricing-button" onclick="scrollToWaitlist()">Join Waitlist</button>
+          <button class="pricing-button" onclick="startCheckout('pro')">Subscribe Now</button>
         </div>
         <div class="pricing-card">
           <h3>Team</h3>
@@ -409,7 +409,7 @@
             <li>✓ API access</li>
             <li>✓ Unlimited archive</li>
           </ul>
-          <button class="pricing-button" onclick="scrollToWaitlist()">Join Waitlist</button>
+          <button class="pricing-button" onclick="startCheckout('team')">Subscribe Now</button>
         </div>
       </div>
     </div>
@@ -494,6 +494,38 @@
 
     function scrollToWaitlist() {
       document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function startCheckout(plan) {
+      const email = document.getElementById('email')?.value;
+      
+      if (!email) {
+        // Scroll to waitlist to get email first
+        document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
+        // Show a message
+        const errorDiv = document.getElementById('error-message');
+        if (errorDiv) {
+          errorDiv.textContent = 'Please enter your email above, then click Subscribe again';
+        }
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, plan })
+        });
+        const data = await res.json();
+        
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Error: ' + (data.error || 'Could not start checkout'));
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
     }
 
     async function handleSignup(e) {

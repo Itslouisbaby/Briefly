@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Briefly</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .header {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .welcome {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    .welcome h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .welcome p {
+      opacity: 0.9;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #555;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .topic-option {
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .topic-option:hover {
+      border-color: #667eea;
+    }
+    .topic-option.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+    .topic-option .emoji {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .delivery-options {
+      display: flex;
+      gap: 1rem;
+    }
+    .delivery-option {
+      flex: 1;
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .delivery-option:hover {
+      border-color: #667eea;
+    }
+    .delivery-option.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5a6fd6;
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .briefing-preview {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .stat-box {
+      text-align: center;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .stat-box .number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+    .stat-box .label {
+      color: #666;
+      font-size: 0.875rem;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .alert-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+    .alert-error {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">📰 Briefly</div>
+    <div class="user-menu">
+      <span id="user-email">user@example.com</span>
+      <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="welcome">
+      <h1>Welcome back! 👋</h1>
+      <p>Your next briefing arrives tomorrow at 7:00 AM</p>
+    </div>
+
+    <div id="alert-container"></div>
+
+    <div class="dashboard-grid">
+      <!-- Topics Selection -->
+      <div class="card">
+        <h2>🎯 Choose Your Topics</h2>
+        <p style="color: #666; margin-bottom: 1rem;">Select up to 3 topics for your daily briefings:</p>
+        
+        <div class="topics-grid" id="topics">
+          <div class="topic-option" data-topic="tech">
+            <span class="emoji">💻</span>
+            <div>Technology</div>
+          </div>
+          <div class="topic-option" data-topic="markets">
+            <span class="emoji">📈</span>
+            <div>Markets</div>
+          </div>
+          <div class="topic-option" data-topic="ai">
+            <span class="emoji">🤖</span>
+            <div>AI</div>
+          </div>
+          <div class="topic-option" data-topic="science">
+            <span class="emoji">🔬</span>
+            <div>Science</div>
+          </div>
+          <div class="topic-option" data-topic="world">
+            <span class="emoji">🌍</span>
+            <div>World News</div>
+          </div>
+          <div class="topic-option" data-topic="crypto">
+            <span class="emoji">₿</span>
+            <div>Crypto</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Preferences -->
+      <div class="card">
+        <h2>⚙️ Delivery Preferences</h2>
+        
+        <div class="form-group">
+          <label>Delivery Time</label>
+          <select id="delivery-time">
+            <option value="06:00">6:00 AM</option>
+            <option value="07:00" selected>7:00 AM</option>
+            <option value="08:00">8:00 AM</option>
+            <option value="09:00">9:00 AM</option>
+            <option value="18:00">6:00 PM</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Method</label>
+          <div class="delivery-options">
+            <div class="delivery-option selected" data-method="email">
+              <div>📧</div>
+              <div>Email</div>
+            </div>
+            <div class="delivery-option" data-method="slack">
+              <div>💬</div>
+              <div>Slack</div>
+            </div>
+            <div class="delivery-option" data-method="both">
+              <div>📧💬</div>
+              <div>Both</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Format</label>
+          <select id="format">
+            <option value="text">Text only</option>
+            <option value="audio">Audio only</option>
+            <option value="both">Text + Audio</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+      </div>
+
+      <!-- Preview -->
+      <div class="card">
+        <h2>👁️ Preview Your Briefing</h2>
+        <div class="briefing-preview">
+📰 BRIEFLY — Tomorrow
+==================================================
+Topic: Technology
+Read time: 5 min
+==================================================
+
+1. Your First Story Will Appear Here
+   Based on your selected topics, we'll curate
+   the most important stories every morning.
+   
+2. Second Story Here
+   Each briefing includes 3-5 carefully selected
+   stories from 15+ quality sources.
+   
+3. Third Story Here
+   Reply with 👍 or 👎 to help us learn
+   what matters most to you.
+
+==================================================
+💬 Reply with feedback: thumbs up 👍 or 👎
+🔧 Update preferences at briefly.ai/dashboard
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="card">
+        <h2>📊 Your Stats</h2>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="number">0</div>
+            <div class="label">Briefings Read</div>
+          </div>
+          <div class="stat-box">
+            <div class="number">0</div>
+            <div class="label">Stories Saved</div>
+          </div>
+          <div class="stat-box">
+            <div class="number">0</div>
+            <div class="label">Time Saved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account -->
+      <div class="card">
+        <h2>👤 Account</h2>
+        
+        <div class="form-group">
+          <label>Current Plan</label>
+          <input type="text" value="Pro - $29/month" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>Next Billing Date</label>
+          <input type="text" value="March 4, 2026" readonly>
+        </div>
+
+        <button class="btn btn-secondary">Manage Subscription</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Topic selection
+    document.querySelectorAll('.topic-option').forEach(el => {
+      el.addEventListener('click', () => {
+        el.classList.toggle('selected');
+        const selected = document.querySelectorAll('.topic-option.selected');
+        if (selected.length > 3) {
+          el.classList.remove('selected');
+          showAlert('You can select up to 3 topics on your plan', 'error');
+        }
+      });
+    });
+
+    // Delivery method selection
+    document.querySelectorAll('.delivery-option').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.delivery-option').forEach(d => d.classList.remove('selected'));
+        el.classList.add('selected');
+      });
+    });
+
+    function savePreferences() {
+      const selectedTopics = Array.from(document.querySelectorAll('.topic-option.selected'))
+        .map(el => el.dataset.topic);
+      const deliveryTime = document.getElementById('delivery-time').value;
+      const deliveryMethod = document.querySelector('.delivery-option.selected')?.dataset.method;
+      const format = document.getElementById('format').value;
+
+      if (selectedTopics.length === 0) {
+        showAlert('Please select at least one topic', 'error');
+        return;
+      }
+
+      // TODO: Save to backend
+      showAlert('Preferences saved successfully!', 'success');
+    }
+
+    function showAlert(message, type) {
+      const container = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+      
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+
+    function logout() {
+      // TODO: Clear session
+      window.location.href = '/';
+    }
+
+    // Load user data on page load
+    async function loadUserData() {
+      // TODO: Fetch from API
+      // const res = await fetch('/api/me');
+      // const user = await res.json();
+    }
+
+    loadUserData();
+  </script>
+</body>
+</html>
